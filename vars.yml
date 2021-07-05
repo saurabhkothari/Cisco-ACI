@@ -1,0 +1,26 @@
+apic_host: 10.76.101.138
+apic_username: admin
+apic_password: "cisco!1234"
+apic_use_proxy: no
+apic_validate_certs: no
+apic_get_fabric_api: "/api/node/class/fabricNode.json"
+apic_get_fabric_url: "https://{{ apic_host }}{{ apic_get_fabric_api }}"
+apic:
+ bootstrap:
+   user: ansible
+   password: "cisco!123"  
+   passphrase: "C1sco1234567891011"
+ openssl:
+   key: "./pki/ansible.key"
+   csr: "./pki/ansible.csr"
+   crt: "./pki/ansible.crt"
+api_path:
+ pending_registration: /api/node/class/dhcpClient.json?query-target-filter=and(or(eq(dhcpClient.ip,"0.0.0.0")),or(eq(dhcpClient.nodeRole,"spine"),eq(dhcpClient.nodeRole,"leaf"),eq(dhcpClient.nodeRole,"unsupported")))
+ registered_nodes: "/api/node/mo/uni/controller/nodeidentpol.json"
+ discovered_nodes: "/api/node/class/fabricNode.json"
+ firmware_nodes: "/api/node/class/fabricNode.json"
+
+openssl:
+ key: "./pki/ansible.key"
+ csr: "./pki/ansible.csr"
+ crt: "./pki/ansible.crt"
