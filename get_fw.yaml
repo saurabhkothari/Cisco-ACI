@@ -5,7 +5,7 @@
   vars:
     aci_login: &aci_login
       hostname: '{{ apic_host }}'
-      username: '{{ api.bootstrap.user }}'
+      username: '{{ apic.bootstrap.user }}'
       private_key: "{{ apic.openssl.key }}"
       #password: '{{ apic_password }}'
       use_proxy: '{{ apic_use_proxy }}'
