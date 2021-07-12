@@ -1,0 +1,21 @@
+- hosts: localhost
+  gather_facts: no
+  
+  tasks:
+  - set_fact:
+     o1: "{{lookup('file', 'spine.csv') }}"
+  - set_fact:
+     o2: "{{lookup('file', 'leaf.csv') }}"
+  - set_fact:
+     a: "{{ (o1 | regex_findall('unregistered') | length) | int }}"
+  - set_fact:
+     b: "{{ (o2 | regex_findall('unregistered') | length ) | int }}"
+  - set_fact:
+     c: "{{ a|int  }}"
+  - set_fact:
+     d: "{{ b|int }}"   
+  - debug:
+     var: a+b
+  - debug:
+      msg: "{{ lookup('env', 'switchNum') | default(a+b, True) }}"
+    
