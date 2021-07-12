@@ -100,7 +100,7 @@
      method: get
     register: reg_discovery
     until: "'active' in reg_discovery | json_query(\"imdata[*].fabricNode.attributes |  [?name == '\" + switchName + \"'].fabricSt\")"
-    retries: 20
+    retries: 100
     delay: 10
     ignore_errors: yes
   
