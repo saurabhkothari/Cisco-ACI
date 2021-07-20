@@ -44,23 +44,6 @@
      delay: 3
      until: result is succeeded
 
-   - name: Create cert private key
-     openssl_privatekey:
-      path: "{{ apic.openssl.key }}"
-      size: 2048
-
-   - name: create openssl csr
-     openssl_csr:
-      path: "{{ apic.openssl.csr }}"
-      privatekey_path: "{{ apic.openssl.key }}"
-
-   - name: Create self signed openssl cert
-     openssl_certificate:
-      path: "{{ apic.openssl.crt }}"
-      privatekey_path: "{{ apic.openssl.key }}"
-      provider: selfsigned
-      selfsigned_not_before: 20210623120000Z
-
    - name: Add cert to ansible user
      aci_aaa_user_certificate:
         <<: *aci_login
