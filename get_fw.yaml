@@ -7,7 +7,8 @@
       hostname: '{{ apic_host }}'
       username: '{{ apic.bootstrap.user }}'
       private_key: "{{ private_key }}"
-      #password: '{{ apic_password }}'
+      #username: admin
+      #password: 'cisco!1234'
       use_proxy: '{{ apic_use_proxy }}'
       validate_certs: '{{ apic_validate_certs }}'
 
