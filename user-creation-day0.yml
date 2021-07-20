@@ -49,7 +49,7 @@
         <<: *aci_login
         aaa_user: '{{ apic.bootstrap.user }}'
         name: '{{ apic.bootstrap.user }}'
-        certificate_data: '{{ lookup("file", apic.openssl.crt) }}'
+        certificate: '{{ lookup("file", apic.openssl.crt) }}'
      register: result
      retries: 2
      delay: 3
