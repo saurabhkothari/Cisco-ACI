@@ -1,0 +1,88 @@
+- hosts: apic
+  gather_facts: no
+  connection: local
+  
+  vars:
+    aci_login: &aci_login
+      hostname: '{{ apic_host }}'
+      username: '{{ apic_username }}'
+      password: '{{ apic_password }}'
+      use_proxy: '{{ apic_use_proxy }}'
+      validate_certs: '{{ apic_validate_certs }}'
+    aci_user_access: &aci_user_access
+      aaaUserDomain:
+        attributes:
+          name: all
+        children:
+          - aaaUserRole:
+              attributes:
+                name: admin
+                privType: writePriv
+  
+  vars_files:
+    - vars.yml     
+  
+  tasks:
+
+   - name: create new user
+     cisco.aci.aci_aaa_user:
+      <<: *aci_login
+      aaa_user: "{{ apic.bootstrap.user }}"
+      aaa_password: "{{ apic.bootstrap.password }}"
+      aaa_password_update_required: no
+      state: present
+
+   - name: Add domain to ansible user
+     aci_rest:
+        <<: *aci_login
+        path: '/api/node/mo/uni/userext/user-{{ apic.bootstrap.user }}.json'
+        method: post
+        content:
+          <<: *aci_user_access
+     register: result
+     retries: 2
+     delay: 3
+     until: result is succeeded
+
+   - name: Create cert private key
+     openssl_privatekey:
+      path: "{{ apic.openssl.key }}"
+      size: 2048
+
+   - name: create openssl csr
+     openssl_csr:
+      path: "{{ apic.openssl.csr }}"
+      privatekey_path: "{{ apic.openssl.key }}"
+
+   - name: Create self signed openssl cert
+     openssl_certificate:
+      path: "{{ apic.openssl.crt }}"
+      privatekey_path: "{{ apic.openssl.key }}"
+      provider: selfsigned
+      selfsigned_not_before: 20210623120000Z
+
+   - name: Add cert to ansible user
+     aci_aaa_user_certificate:
+        <<: *aci_login
+        aaa_user: '{{ apic.bootstrap.user }}'
+        name: '{{ apic.bootstrap.user }}'
+        certificate_data: '{{ lookup("file", apic.openssl.crt) }}'
+     register: result
+     retries: 2
+     delay: 3
+     until: result is succeeded
+
+   - name: Configure encryption passphrase for config import/export
+     aci_rest:
+        <<: *aci_login
+        path: /api/node/mo/uni/exportcryptkey.json
+        method: post
+        content:
+          pkiExportEncryptionKey:
+            attributes:
+              strongEncryptionEnabled: 'true'
+              passphrase: '{{ apic.bootstrap.passphrase }}'
+     register: result
+     retries: 2
+     delay: 3
+     until: result is succeeded
