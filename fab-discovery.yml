@@ -61,7 +61,7 @@
     aci_rest: 
      <<: *aci_login
      path: "{{ api_path.registered_nodes }}"
-     content: 
+     content: | 
         {
           "fabricNodeIdentP": {
           "attributes": {
