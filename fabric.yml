@@ -31,7 +31,7 @@
      var: SW_ID
 
   - name: Add ipv4 address to out of band mgmt interface
-    cisco.aci_static_node_mgmt_address:
+    cisco.aci.aci_static_node_mgmt_address:
       <<: *aci_login
       epg: default
       pod_id: 1
