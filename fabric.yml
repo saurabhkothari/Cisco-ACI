@@ -59,21 +59,21 @@
      content: {"datetimePol":{"attributes":{"dn":"uni/fabric/time-ntp","name":"{{ fabric.ntp.name }}","rn":"time-{{ fabric.ntp.name }}","status":"created"},"children":[{"datetimeNtpProv":{"attributes":{"dn":"uni/fabric/time-{{ fabric.ntp.name }}/ntpprov-{{ fabric.ntp.ip }}","name":"{{ fabric.ntp.ip }}","rn":"ntpprov-{{ fabric.ntp.ip }}","status":"created"},"children":[{"datetimeRsNtpProvToEpg":{"attributes":{"tDn":"uni/tn-mgmt/mgmtp-default/oob-default","status":"created"},"children":[]}}]}}]}}
     delegate_to: localhost    
     register: result
-    
+
   - name: Configure encryption passphrase for config import/export
-     aci_rest:
+    aci_rest:
         <<: *aci_login
-        path: /api/node/mo/uni/exportcryptkey.json
+        path: "/api/node/mo/uni/exportcryptkey.json"
         method: post
         content:
           pkiExportEncryptionKey:
             attributes:
               strongEncryptionEnabled: 'true'
               passphrase: '{{ apic.bootstrap.passphrase }}'
-     register: result
-     retries: 2
-     delay: 3
-     until: result is succeeded
+    register: result
+    retries: 2
+    delay: 3
+    until: result is succeeded
 
       
 
