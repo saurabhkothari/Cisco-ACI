@@ -48,8 +48,8 @@
      aci_aaa_user_certificate:
         <<: *aci_login
         aaa_user: '{{ apic.bootstrap.user }}'
-        certificate_name: '{{ apic.bootstrap.user }}'
-        certificate: '{{ lookup("file", apic.openssl.crt) }}'
+        name: '{{ apic.bootstrap.user }}'
+        certificate_data: '{{ lookup("file", apic.openssl.crt) }}'
      register: result
      retries: 2
      delay: 3
