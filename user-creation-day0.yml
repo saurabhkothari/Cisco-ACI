@@ -23,34 +23,36 @@
     - vars.yml     
   
   tasks:
+   - name: Bootstrap User
+     block: 
+        - name: create new user
+          cisco.aci.aci_aaa_user:
+            <<: *aci_login
+            aaa_user: "{{ apic.bootstrap.user }}"
+            aaa_password: "{{ apic.bootstrap.password }}"
+            aaa_password_update_required: no
+            state: present
 
-   - name: create new user
-     cisco.aci.aci_aaa_user:
-      <<: *aci_login
-      aaa_user: "{{ apic.bootstrap.user }}"
-      aaa_password: "{{ apic.bootstrap.password }}"
-      aaa_password_update_required: no
-      state: present
+        - name: Add domain to ansible user
+          aci_rest:
+              <<: *aci_login
+              path: '/api/node/mo/uni/userext/user-{{ apic.bootstrap.user }}.json'
+              method: post
+              content:
+                <<: *aci_user_access
+          register: result
+          retries: 2
+          delay: 3
+          until: result is succeeded
 
-   - name: Add domain to ansible user
-     aci_rest:
-        <<: *aci_login
-        path: '/api/node/mo/uni/userext/user-{{ apic.bootstrap.user }}.json'
-        method: post
-        content:
-          <<: *aci_user_access
-     register: result
-     retries: 2
-     delay: 3
-     until: result is succeeded
-
-   - name: Add cert to ansible user
-     aci_aaa_user_certificate:
-        <<: *aci_login
-        aaa_user: '{{ apic.bootstrap.user }}'
-        name: '{{ apic.bootstrap.user }}'
-        certificate_data: '{{ lookup("file", apic.openssl.crt) }}'
-     register: result
-     retries: 2
-     delay: 3
-     until: result is succeeded
+        - name: Add cert to ansible user
+          aci_aaa_user_certificate:
+              <<: *aci_login
+              aaa_user: '{{ apic.bootstrap.user }}'
+              name: '{{ apic.bootstrap.user }}'
+              certificate_data: '{{ lookup("file", apic.openssl.crt) }}'
+          register: result
+          retries: 2
+          delay: 3
+          until: result is succeeded
+     delegate_to: localhost  
