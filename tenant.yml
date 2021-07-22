@@ -1,0 +1,61 @@
+- hosts: site-1
+  gather_facts: no
+  connection: local
+
+  vars_files:
+    - vars.yml
+
+  # We prepare an aci_login anchor for convenience
+  vars:
+    aci_login: &aci_login
+      hostname: '{{ apic_host_site1 }}'
+      username: '{{ apic.bootstrap.user }}'
+      private_key: "{{ private_key }}"
+      #password: '{{ apic_password }}'
+      use_proxy: '{{ apic_use_proxy }}'
+      validate_certs: '{{ apic_validate_certs }}'
+    tenant:      "saukotha_acc"
+    vrf_name:    "saukotha_acc"
+    bd:          "acc_BD3"
+    gateway: "10.10.100.1"
+
+  tasks:
+  - name: Tenant
+    block: 
+      - name: Create tenants
+        aci_tenant:
+          <<: *aci_login
+          tenant: '{{ tenant }}'
+          state: present
+          output_path: 'config.json'
+
+      - name: ensure context for tenant exists
+        aci_vrf:
+            <<: *aci_login             
+            tenant: '{{ tenant }}'
+            vrf_name: '{{ vrf_name }}'
+            state: present
+            output_path: 'config.json'
+          
+      - name: Creating BD
+        aci_bd:
+            <<: *aci_login
+            tenant: "{{ tenant }}"
+            vrf_name: "{{ vrf_name }}"
+            bd: "{{ bd }}"
+            state: present
+            use_proxy: no
+            output_path: 'config.json'
+          
+      - name: Create a subnet
+        aci_bd_subnet:
+            <<: *aci_login
+            tenant: "{{ tenant }}"
+            bd: "{{ bd }}"
+            gateway: "{{ gateway }}"
+            mask: "24"
+            state: present
+            use_proxy: no
+            output_path: 'config.json'
+    delegate_to: localhost
+          
