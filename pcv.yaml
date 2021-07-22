@@ -1,0 +1,42 @@
+---
+- name: Pre-Change Analysys
+  hosts: nae
+  connection: local
+  gather_facts: no
+
+  vars:
+    nae_login: &nae_login
+        host: "{{ nae_host }}"
+        username: "{{ nae_username }}"
+        password: "{{ nae_password }}" 
+        validate_certs: false
+    PreChangeAnalysisName: saukotha_acc
+    AssuranceGroup: CSS-Site1
+    validate_certs: False
+  
+  vars_files:
+    - vars.yml                  
+
+  tasks:
+  - name:  NAE PCV
+    block: 
+      - name: Create a pre-change analysis
+        cisco.nae.nae_prechange:
+          <<: *nae_login
+          ag_name: "{{ AssuranceGroup }}"
+          name: "{{ PreChangeAnalysisName }}"
+          state: present
+          verify: true
+  #       file: config.json
+          file: config.json
+      - name: Get PCV Result
+        cisco.nae.nae_prechange:
+          <<: *nae_login
+          ag_name: "{{ AssuranceGroup }}"
+          name: "{{ PreChangeAnalysisName }}"
+          state: query
+          verify: True
+          # ignore_sm:
+          #   # We ignore this info event or the pipeline will always fail. 
+          #   - APP_EPG_NOT_DEPLOYED
+    delegate_to: localhost
