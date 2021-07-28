@@ -16,7 +16,7 @@
       validate_certs: '{{ apic_validate_certs }}'
     tenant:      "saukotha_acc"
     vrf_name:    "saukotha_acc"
-    bd:          "acc_BD4"
+    bd:          "acc_BD5"
     gateway: 10.10.101.1
 
   tasks:
