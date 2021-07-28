@@ -17,7 +17,7 @@
     tenant:      "saukotha_acc"
     vrf_name:    "saukotha_acc"
     bd:          "acc_BD4"
-    gateway: 10.10.100.1
+    gateway: 10.10.101.1
 
   tasks:
   - name: Tenant
