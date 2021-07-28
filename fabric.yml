@@ -6,7 +6,7 @@
     aci_login: &aci_login
       hostname: '{{ apic_host }}'
       username: '{{ apic.bootstrap.user }}'
-      private_key: "{{ apic.openssl.key }}"
+      private_key: "{{ private_key }}"
       #password: '{{ apic_password }}'
       use_proxy: '{{ apic_use_proxy }}'
       validate_certs: '{{ apic_validate_certs }}'
